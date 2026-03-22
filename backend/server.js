@@ -6,7 +6,25 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "https://ecomercialfrontend111.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    }
+  },
+  credentials: true
+}));
+
+app.options("*", cors());
 app.use(express.json({ limit: "50mb" }));
 
 const storage = multer.memoryStorage();
