@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express();
 
 const allowedOrigins = [
-  "https://ecomercialfrontend111.vercel.app",
+  "https://ecomercialfrontend2.vercel.app",
   "http://localhost:3000",
   "http://localhost:5173",
   process.env.FRONTEND_URL
