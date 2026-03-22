@@ -24,7 +24,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.options("*", cors());
+// app.options("*", cors()); // unsupported in current path-to-regexp version
 app.use(express.json({ limit: "50mb" }));
 
 const storage = multer.memoryStorage();
