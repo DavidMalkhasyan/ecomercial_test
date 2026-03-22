@@ -6,18 +6,15 @@ require("dotenv").config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
-// Multer config с увеличенным лимитом
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
   limits: { fileSize: 50 * 1024 * 1024 }
 });
 
-// DB connection с обработкой ошибок
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -28,7 +25,6 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
   });
 
-// Product Schema с индексами для быстрого поиска
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   price: { type: Number, required: true, min: 0 },
@@ -44,7 +40,6 @@ productSchema.index({ name: "text" });
 
 const Product = mongoose.model("Product", productSchema);
 
-// GET все продукты
 app.get("/products", async (req, res) => {
   try {
     const products = await Product.find().select("-__v");
@@ -55,12 +50,10 @@ app.get("/products", async (req, res) => {
   }
 });
 
-// POST новый продукт
 app.post("/products", upload.single("image"), async (req, res) => {
   try {
     const { name, price, category } = req.body;
 
-    // Валидация
     if (!name || !price || !category) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -83,7 +76,6 @@ app.post("/products", upload.single("image"), async (req, res) => {
   }
 });
 
-// DELETE продукт
 app.delete("/products/:id", async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -99,10 +91,7 @@ app.delete("/products/:id", async (req, res) => {
   }
 });
 
-// Запуск сервера
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✓ Server running on port ${PORT}`);
 });
-
-app.listen(process.env.PORT || 3001);
